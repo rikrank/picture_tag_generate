@@ -1,44 +1,57 @@
 const fs = require('fs')
 const dir = `./src/img`;
 const files = fs.readdirSync(dir);
+const sizeOf = require("image-size");
+const glob = require("glob");
 
-let fileDetectionArr = [];
+const allowExtensions = ".(jpeg|jpg|JPG|png|webp|bmp|gif)$";
 
+const pattern = "./src/img/**/*";
 
-const genElement = (webp, jpg) => {
+glob(pattern, (err, files) => {
+    if (err) {
+        console.log(err); return;
+    }
+    const h = files.map((file) => {
+        const dimentions = sizeOf(file);
+        return dimentions;
+    })
 
-    const pictureElement = `
-    <picture class="p-gallery-space__img">
-    <source srcset="/product_carpet/ga3600/gallery/img/${webp}" type="image/webp" width="300" height="300">
-    <img src="/product_carpet/ga3600/gallery/img/${jpg}" alt="" width="300" height="300">
+});
+
+const genHtml = (jpg, webp, src, width, height) => {
+    const pictureHtml = `
+    <picture>
+        <source srcset="${src}${webp}" type="image/webp" width="${width}" height="${height}" />
+        <img src="${src}${jpg}" alt="" width="${width}" height="${height}" />
     </picture>
     `;
 
-    console.log(pictureElement);
-
-    return pictureElement;
+    return pictureHtml;
 }
 
-const generatePictureElement = (name) => {
-    if (name.match(/.DS_Store/)) return; // DS_Storeダメ絶対マン
+const genHTMLElementHandler = (src, width, height) => {
+    const targetFiles = files.filter((file) => {
+        const extention = file.split(".").pop();
+        const isMedia = allowExtensions.includes(extention);
+        if (isMedia) {
+            return file;
+        }
+    });
 
-    const isJpg = name.match(/.jpg/);
-    const isWebp = name.match(/.webp/);
+    const sliceByNumber = (array, number) => {
+        const length = Math.ceil(array.length / number);
+        return new Array(length).fill().map((_, i) => array.slice(i * number, (i + 1) * number));
+    };
 
-    if (isJpg) {
-        fileDetectionArr.push(name);
-    } else if (isWebp) {
-        fileDetectionArr.push(name)
-    }
+    const slicedArr = sliceByNumber(targetFiles, 2);
+    const genPictureTags = slicedArr.map((_, i) => genHtml(_[0], _[1], src, width, height));
+    const convertedHTMLTags = genPictureTags.join('');
 
-    if (fileDetectionArr.length === 2) {
-        genElement(fileDetectionArr[0], fileDetectionArr[1])
-        fileDetectionArr = [];
-    }
-
+    fs.writeFile('index.html', convertedHTMLTags, (err) => {
+        if (err) { throw err; }
+        console.log('index.htmlが作成されました');
+    });
 }
 
-files.map((file) => {
-    const fileName = file;
-    return generatePictureElement(fileName);
-});
+genHTMLElementHandler("/assets/img/", 300, 300);
