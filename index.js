@@ -67,4 +67,4 @@ const genHTMLElementHandler = () => {
 
 }
 
-// genHTMLElementHandler();
+genHTMLElementHandler();
