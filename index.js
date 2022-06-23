@@ -1,7 +1,6 @@
 const fs = require('fs')
-const dir = `./src/img`;
-const sizeOf = require("image-size");
 const glob = require("glob");
+const sizeOf = require("image-size");
 
 const ALLOW_EXTENTION = ".(jpeg|jpg|JPG|png|webp|bmp|gif)$";
 const ENTRY_POINT = "./src/img/**/*";
@@ -58,7 +57,6 @@ const genHTMLElementHandler = () => {
         })
 
         const convertedHtml = html.join('');
-
         fs.writeFile('index.html', convertedHtml, function (err) {
             if (err) { throw err; }
             console.log('index.htmlが作成されました');
