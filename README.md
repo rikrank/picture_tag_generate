@@ -1,4 +1,4 @@
-# Pictureタグを自動で生成する処理
+# Pictureタグを自動で生成するスクリプト
 
 ## Quick Start
 1. prepare images under src (jpg / webp).
