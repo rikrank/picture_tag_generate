@@ -2,7 +2,7 @@ const fs = require('fs')
 const glob = require("glob");
 const sizeOf = require("image-size");
 
-const ALLOW_EXTENTION = ".(jpeg|jpg|JPG|png|webp|bmp|gif)$";
+const ALLOW_EXTENSION = ".(jpeg|jpg|JPG|png|webp|bmp|gif)$";
 const TARGET_PATTERN = "./**/*.{jpeg,jpg,JPG,webp,png,bmp,gif}";
 
 const genHtml = (img) => {
@@ -39,14 +39,14 @@ const genHTMLElementHandler = () => {
 
             const isExistWebp = item[1] || null;
 
-            const TARGET_PATTERNDefaultExtention = ALLOW_EXTENTION.includes(item[0].type)
-            const imgPath = TARGET_PATTERNDefaultExtention ? item[0].fileName : ''; // 空だったら、fileNameは""
+            const targetPatternDefault = ALLOW_EXTENSION.includes(item[0].type)
+            const imgPath = targetPatternDefault ? item[0].fileName : ''; // 空だったら、fileNameは""
 
             let webpPath = "";
 
             if (isExistWebp) {
-                const TARGET_PATTERNWEBP = item[1].type === 'webp';
-                webpPath = TARGET_PATTERNWEBP ? item[1].fileName : ''; // 空だったら、fileNameは""
+                const targetPatternWebp = item[1].type === 'webp';
+                webpPath = targetPatternWebp ? item[1].fileName : ''; // 空だったら、fileNameは""
             } else {
                 console.log('webpファイルが存在しない画像ファイルがあります。\nファイルパスが空のsourceタグを生成します。');
             }
