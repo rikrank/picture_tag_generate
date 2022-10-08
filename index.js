@@ -6,11 +6,11 @@ const ALLOW_EXTENSION = ".(jpeg|jpg|JPG|png|webp|bmp|gif)$";
 const TARGET_PATTERN = "./**/*.{jpeg,jpg,JPG,webp,png,bmp,gif}";
 
 const genHtml = (img) => {
-    const { imgPath, webpPath, width, height } = img;
+    const { replacedImgPath, replacedWebpPath, width, height } = img;
     const pictureHtml = `
     <picture>
-        <source srcset="${webpPath}" type="image/webp" width="${width}" height="${height}" />
-        <img src="${imgPath}" alt="" width="${width}" height="${height}" />
+        <source srcset="${replacedWebpPath}" type="image/webp" width="${width}" height="${height}" />
+        <img src="${replacedImgPath}" alt="" width="${width}" height="${height}" />
     </picture>
     `;
     // console.log(pictureHtml);
@@ -54,19 +54,27 @@ const genHTMLElementHandler = () => {
             const width = item[0].width;
             const height = item[0].height;
 
+            // コンパイル後の形式にパス変換
+            const replacedImgPath = imgPath.replace('./src/', '/');
+            const replacedWebpPath = webpPath.replace('./src/', '/');
+
             return {
-                imgPath, webpPath, width, height
+                replacedImgPath, replacedWebpPath, width, height
             };
         })
 
-        const html = imgValues.map((item) => {
+        const resultSource = imgValues.map((item) => {
             return genHtml(item);
         })
 
-        const convertedHtml = html.join('');
-        fs.writeFile('index.html', convertedHtml, function (err) {
-            if (err) { throw err; }
-            console.log('\nindex.html にて pictureタグが生成されました');
+        const snippets = resultSource.join('');
+        fs.writeFile('index.html', snippets, function (err) {
+            if (err) {
+                console.error('エラーが発生しました。スニペットを生成できませんでした。');
+                throw err;
+            } else {
+                console.log('\nスニペットが生成されました');
+            }
         });
     });
 
