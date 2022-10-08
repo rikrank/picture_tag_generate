@@ -1,7 +1,8 @@
 {
-  "name": "file_node_test",
+  "name": "picture_tag_converter",
   "version": "1.0.0",
   "main": "index.js",
+  "author": "Riku Morishita",
   "license": "MIT",
   "scripts": {
     "build": "node index.js"
