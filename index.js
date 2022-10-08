@@ -74,15 +74,20 @@ const genHTMLElementHandler = (fileType) => {
         })
 
         const outPutFile = (type) => {
-            fs.mkdir('dist', { recursive: true }, (err) => {
+            const OUTPUT_DIR = 'dist';
+            fs.mkdir(OUTPUT_DIR, { recursive: true }, (err) => {
                 if (err) { throw err; }
             });
 
+            let fileExt;
+
             if (type === 'html') {
-                return "./dist/snippet.html";
+                fileExt = ".html";
             } else if (type === 'pug') {
-                return "./dist/snippet.pug";
+                fileExt = ".pug";
             }
+
+            return `./${OUTPUT_DIR}/snippet${fileExt}`;
         }
 
         const snippets = resultSource.join('');
