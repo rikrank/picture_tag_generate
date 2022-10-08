@@ -73,16 +73,20 @@ const genHTMLElementHandler = (fileType) => {
             return genHtml(item, fileType);
         })
 
-        const toFileType = (type) => {
+        const outPutFile = (type) => {
+            fs.mkdir('dist', { recursive: true }, (err) => {
+                if (err) { throw err; }
+            });
+
             if (type === 'html') {
-                return "snippet.html";
+                return "./dist/snippet.html";
             } else if (type === 'pug') {
-                return "snippet.pug";
+                return "./dist/snippet.pug";
             }
         }
 
         const snippets = resultSource.join('');
-        fs.writeFile(toFileType(fileType), snippets, function (err) {
+        fs.writeFile(outPutFile(fileType), snippets, function (err) {
             if (err) {
                 console.error('エラーが発生しました。スニペットを生成できませんでした。');
                 throw err;

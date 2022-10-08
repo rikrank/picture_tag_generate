@@ -1,7 +1,8 @@
 # Pictureタグを自動で生成するスクリプト
 
 ## Quick Start
-1. prepare images(jpg / webp) under src directory.
-2. Run the command.
-   1. `node index.js`
-3. `index.html` will be created with picture tags.
+1. `src`配下に画像を追加してください。
+2. 下記コマンドを実行
+   1. `node index.js 'ファイルタイプ'`
+      1. `ファイルタイプ`には`html` もしくは `pug` ファイルを入力してください。
+   2.  `dist` 配下にて指定のファイル対応に対応するスニペットファイルが生成されます。
