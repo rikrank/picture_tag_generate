@@ -5,16 +5,22 @@ const sizeOf = require("image-size");
 const ALLOW_EXTENSION = ".(jpeg|jpg|JPG|png|webp|bmp|gif)$";
 const TARGET_PATTERN = "./**/*.{jpeg,jpg,JPG,webp,png,bmp,gif}";
 
-const genHtml = (img) => {
+const genHtml = (img, fileType) => {
     const { replacedImgPath, replacedWebpPath, width, height } = img;
-    const pictureHtml = `
-    <picture>
-        <source srcset="${replacedWebpPath}" type="image/webp" width="${width}" height="${height}" />
-        <img src="${replacedImgPath}" alt="" width="${width}" height="${height}" />
-    </picture>
-    `;
-    // console.log(pictureHtml);
-    return pictureHtml;
+    if (fileType === 'html') {
+        return `
+        <picture>
+          <source srcset="${replacedWebpPath}" type="image/webp" width="${width}" height="${height}" />
+          <img src="${replacedImgPath}" alt="" width="${width}" height="${height}" />
+        </picture>
+        `;
+    } else if (fileType === 'pug') {
+        return `
+        picture
+          source(srcset="${replacedWebpPath}" type="image/webp" width="${width}" height="${height}")
+          img(src="${replacedImgPath}" alt="" width="${width}" height="${height}")
+        `;
+    }
 }
 
 const sliceByNumber = (array, number) => {
@@ -22,7 +28,7 @@ const sliceByNumber = (array, number) => {
     return new Array(length).fill().map((_, i) => array.slice(i * number, (i + 1) * number));
 };
 
-const genHTMLElementHandler = () => {
+const genHTMLElementHandler = (fileType) => {
     glob(TARGET_PATTERN, (err, files) => {
         if (err) {
             console.log(err); return;
@@ -64,20 +70,33 @@ const genHTMLElementHandler = () => {
         })
 
         const resultSource = imgValues.map((item) => {
-            return genHtml(item);
+            return genHtml(item, fileType);
         })
 
+        const toFileType = (type) => {
+            if (type === 'html') {
+                return "snippet.html";
+            } else if (type === 'pug') {
+                return "snippet.pug";
+            }
+        }
+
         const snippets = resultSource.join('');
-        fs.writeFile('index.html', snippets, function (err) {
+        fs.writeFile(toFileType(fileType), snippets, function (err) {
             if (err) {
                 console.error('エラーが発生しました。スニペットを生成できませんでした。');
                 throw err;
             } else {
-                console.log('\nスニペットが生成されました');
+                console.log(`\n${fileType}：スニペットが生成されました`);
             }
         });
     });
-
 }
 
-genHTMLElementHandler();
+const inputFileType = process.argv[2];
+
+if (inputFileType === 'html' || inputFileType === 'pug') {
+    genHTMLElementHandler(inputFileType);
+} else {
+    console.log("'html' または 'pug' のいずれかを入力してください。");
+}
