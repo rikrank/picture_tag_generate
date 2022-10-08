@@ -3,18 +3,18 @@ const glob = require("glob");
 const sizeOf = require("image-size");
 
 const ALLOW_EXTENTION = ".(jpeg|jpg|JPG|png|webp|bmp|gif)$";
-const ENTRY_POINT = "./src/img/**/*";
+const ENTRY_POINT = "./src/assets/img/**/*";
 
 const genHtml = (img) => {
-    const { jpgValue, webpValue, width, height } = img;
+    const { imgPath, webpPath, width, height } = img;
 
     const pictureHtml = `
     <picture>
-        <source srcset="${webpValue}" type="image/webp" width="${width}" height="${height}" />
-        <img src="${jpgValue}" alt="" width="${width}" height="${height}" />
+        <source srcset="${webpPath}" type="image/webp" width="${width}" height="${height}" />
+        <img src="${imgPath}" alt="" width="${width}" height="${height}" />
     </picture>
     `;
-    console.log(pictureHtml);
+    // console.log(pictureHtml);
     return pictureHtml;
 }
 
@@ -25,34 +25,36 @@ const sliceByNumber = (array, number) => {
 
 const genHTMLElementHandler = () => {
     glob(ENTRY_POINT, (err, files) => {
+        console.log("files=>", files);
         if (err) {
             console.log(err); return;
         }
 
-        const h = files.map((file) => {
+        const fileDimentions = files.map((file) => {
             let dimentions = sizeOf(file);
             dimentions.fileName = file;
             return dimentions;
         })
 
-        const slicedArrH = sliceByNumber(h, 2);
-        const g = slicedArrH.map((item) => {
+        const slicedFileDimentions = sliceByNumber(fileDimentions, 2);
+        const imgValues = slicedFileDimentions.map((item) => {
 
             const patternDefaultExtention = ALLOW_EXTENTION.includes(item[0].type)
             const patternWEBP = item[1].type === 'webp';
 
-            const defaultImgValue = patternDefaultExtention ? item[0].fileName : ''; // 空だったら、fileNameは""
-            const webpImgValue = patternWEBP ? item[1].fileName : ''; // 空だったら、fileNameは""
+            const imgPath = patternDefaultExtention ? item[0].fileName : ''; // 空だったら、fileNameは""
+            const webpPath = patternWEBP ? item[1].fileName : ''; // 空だったら、fileNameは""
             const width = item[0].width;
             const height = item[0].height;
 
             if (patternDefaultExtention && patternWEBP) {
                 return {
-                    jpgValue: defaultImgValue, webpValue: webpImgValue, width, height
+                    imgPath, webpPath, width, height
                 };
             }
         })
-        const html = g.map((item) => {
+
+        const html = imgValues.map((item) => {
             return genHtml(item);
         })
 
