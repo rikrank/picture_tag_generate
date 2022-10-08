@@ -5,7 +5,7 @@
   "author": "Riku Morishita",
   "license": "MIT",
   "scripts": {
-    "build": "node index.js"
+    "build": "node ./scripts/index.js"
   },
   "devDependencies": {
     "glob": "^8.0.3",
