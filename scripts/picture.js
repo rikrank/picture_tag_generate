@@ -1,8 +1,11 @@
 const fs = require('fs')
 const glob = require("glob");
 const sizeOf = require("image-size");
+const imageminWebp = require("imagemin-webp");
+const imagemin = require("imagemin-keep-folder");
 
-const TARGET_PATTERN = "./**/*.{jpeg,jpg,JPG,webp,png,bmp,gif}";
+const TARGET_PATTERN = "./src/**/*.{jpeg,jpg,JPG,webp,png,bmp,gif}";
+const WEBP_OUT_DIR = "./src/**/*";
 
 const generateSnippets = (img, fileType) => {
     const { replacedImgPath, replacedWebpPath, width, height } = img;
@@ -20,7 +23,7 @@ const generateSnippets = (img, fileType) => {
           img(src="${replacedImgPath}" alt="" width="${width}" height="${height}")
         `;
     }
-}
+};
 
 const sliceByNumber = (array, number) => {
     const length = Math.ceil(array.length / number);
@@ -30,8 +33,6 @@ const sliceByNumber = (array, number) => {
 const generateSnippetsHandler = (fileType) => {
     glob(TARGET_PATTERN, (err, files) => {
 
-        console.log(files);
-        
         // 画像ファイルが存在しなかった場合
         if (!files.length) {
             console.error('画像ファイルが存在しません');
@@ -110,10 +111,18 @@ const generateSnippetsHandler = (fileType) => {
     });
 }
 
-const inputFileType = process.argv[2];
+const generateWebpAndSnippets = (targetFiles, inputFileType) => {
+    imagemin([targetFiles], {
+        use: [imageminWebp({ quality: 50 })],
+    }).then(() => {
+        generateSnippetsHandler(inputFileType);
+    });
+};
 
+const inputFileType = process.argv[2];
 if (inputFileType === 'html' || inputFileType === 'pug') {
-    generateSnippetsHandler(inputFileType);
+    generateWebpAndSnippets(WEBP_OUT_DIR, inputFileType);
 } else {
     console.log("'html' または 'pug' のいずれかを入力してください。");
 }
+

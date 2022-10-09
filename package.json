@@ -9,6 +9,8 @@
   },
   "devDependencies": {
     "glob": "^8.0.3",
-    "image-size": "^1.0.1"
+    "image-size": "^1.0.1",
+    "imagemin-keep-folder": "^5.3.2",
+    "imagemin-webp": "6.0.0"
   }
 }
