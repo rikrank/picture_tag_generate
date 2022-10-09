@@ -56,8 +56,8 @@ const generateSnippetsHandler = (fileType) => {
                     imgPath = item[0].fileName;
                 }
 
-                const isExistAlternateExt = item[1] || null;
-                if (isExistAlternateExt) {
+                const isExistMultipleExt = item[1] || null;
+                if (isExistMultipleExt) {
                     if (item[1].type === 'webp') {
                         webpPath = item[1].fileName;
                     } else {
@@ -111,6 +111,7 @@ const generateSnippetsHandler = (fileType) => {
     });
 }
 
+// WebP生成
 const generateWebpAndSnippets = (targetFiles, inputFileType) => {
     imagemin([targetFiles], {
         use: [imageminWebp({ quality: 50 })],
