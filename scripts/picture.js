@@ -2,7 +2,6 @@ const fs = require('fs')
 const glob = require("glob");
 const sizeOf = require("image-size");
 
-const ALLOW_EXTENSION = ".(jpeg|jpg|JPG|png|webp|bmp|gif)$";
 const TARGET_PATTERN = "./**/*.{jpeg,jpg,JPG,webp,png,bmp,gif}";
 
 const generateSnippets = (img, fileType) => {
@@ -30,6 +29,9 @@ const sliceByNumber = (array, number) => {
 
 const generateSnippetsHandler = (fileType) => {
     glob(TARGET_PATTERN, (err, files) => {
+
+        console.log(files);
+        
         // 画像ファイルが存在しなかった場合
         if (!files.length) {
             console.error('画像ファイルが存在しません');
@@ -44,18 +46,22 @@ const generateSnippetsHandler = (fileType) => {
             const slicedFileDimentions = sliceByNumber(fileDimentions, 2);
             const imgValues = slicedFileDimentions.map((item) => {
 
-                const isExistWebp = item[1] || null;
-
-                const targetPatternDefault = ALLOW_EXTENSION.includes(item[0].type)
-                const imgPath = targetPatternDefault ? item[0].fileName : ''; // 空だったら、fileNameは""
-
+                let imgPath = "";
                 let webpPath = "";
 
-                if (isExistWebp) {
-                    const targetPatternWebp = item[1].type === 'webp';
-                    webpPath = targetPatternWebp ? item[1].fileName : ''; // 空だったら、fileNameは""
+                if (item[0].type === 'webp') {
+                    webpPath = item[0].fileName;
                 } else {
-                    console.log('webpファイルが存在しない画像ファイルがあります。\nファイルパスが空のsourceタグを生成します。');
+                    imgPath = item[0].fileName;
+                }
+
+                const isExistAlternateExt = item[1] || null;
+                if (isExistAlternateExt) {
+                    if (item[1].type === 'webp') {
+                        webpPath = item[1].fileName;
+                    } else {
+                        imgPath = "";
+                    }
                 }
 
                 const width = item[0].width;
