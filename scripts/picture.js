@@ -12,14 +12,14 @@ const generateSnippets = (img, fileType) => {
     if (fileType === 'html') {
         return `
         <picture>
-          <source srcset="${replacedWebpPath}" type="image/webp" width="${width}" height="${height}" />
+          <source srcset="${replacedWebpPath}" type="image/webp" />
           <img src="${replacedImgPath}" alt="" width="${width}" height="${height}" />
         </picture>
         `;
     } else if (fileType === 'pug') {
         return `
         picture
-          source(srcset="${replacedWebpPath}" type="image/webp" width="${width}" height="${height}")
+          source(srcset="${replacedWebpPath}" type="image/webp")
           img(src="${replacedImgPath}" alt="" width="${width}" height="${height}")
         `;
     }
